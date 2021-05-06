@@ -8,7 +8,9 @@ namespace Startica.Test
     {
         static void Main(string[] args)
         {
-            FillControl(2, 2001, 28);
+
+            //FillControl(2, 2001, 28);
+            FillControlLinq(2, 2001, 28);
         }
 
         private static void FillControl(int selectedMonth, int selectedYear, int numberOfDaysInMonth)
@@ -65,20 +67,19 @@ namespace Startica.Test
                 .GroupBy(x=>x.Date)
                 .ToDictionary(k=> k.Key, v=>v.Count());
 
-            var listToPopulate = new List<AppointmentsDateInfo>();
-
-            for (var day = 1; day <= numberOfDaysInMonth; day++)
-            {
-                var key = new DateTime(selectedYear, selectedMonth, day);
-                var item = new AppointmentsDateInfo()
+            var listToPopulate =
+                Enumerable.Range(1, 28)
+                .Select(day =>
                 {
-                    Date = key,
-                    CountAppointments = hashSet.ContainsKey(key) ? hashSet[key] : 0,
-                };
+                    var key = new DateTime(selectedYear, selectedMonth, day);
+                    var item = new AppointmentsDateInfo()
+                    {
+                        Date = key,
+                        CountAppointments = hashSet.ContainsKey(key) ? hashSet[key] : 0,
+                    };
 
-                listToPopulate.Add(item);
-            }
-
+                    return item;
+                }).ToList();
 
             //-------------------------
             var ctlAppointmentsDate = new AppointmentsDateControl();
